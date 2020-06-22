@@ -1,4 +1,5 @@
 const { AuthorizationCode } = require('simple-oauth2')
+const cookie = require('cookie')
 
 const authorizationCode = new AuthorizationCode({
   auth: {
@@ -26,6 +27,7 @@ exports.handler = async event => {
           JSON.stringify(token)
         ).toString('base64')}`
       },
+      multiValueHeaders: ['Set-Cookie', cookie.serialize('token', token, {httpOnly: true, sameSite: 'strict'})],
       statusCode: 302
     }
   } catch (error) {
