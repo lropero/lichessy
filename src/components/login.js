@@ -5,6 +5,7 @@ import { LoadingOutlined } from '@ant-design/icons'
 import { useDispatch, useSelector } from 'react-redux'
 
 import chess from 'lichessy/assets/chess.mp4'
+import lichess from 'lichessy/assets/lichess.png'
 import Logo from 'lichessy/assets/logo.svg'
 import { updateToken } from 'lichessy/store/session'
 import { Video } from 'lichessy/components'
@@ -65,7 +66,10 @@ const Login = () => {
             style={{ padding: '0 20px' }}
             type='primary'
           >
-            Continue with Lichess ♟
+            <Space>
+              Continue with Lichess
+              <img src={lichess} style={{ width: 18 }} />
+            </Space>
           </Button>
         </Space>
       </Main>
