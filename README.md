@@ -4,4 +4,4 @@ Lichess with Chessy.
 
 ### Live version
 
-See it here → [https://lichessy.org/](https://lichessy.org/)
+See it here → [www.lichessy.org](https://www.lichessy.org/)

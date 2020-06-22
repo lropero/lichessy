@@ -19,3 +19,6 @@ fs.writeFileSync(
     return env
   }, '')
 )
+
+const stats = fs.statSync('./.env')
+console.log(`.env file created: ${stats.size} bytes`)
