@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "Lichess with Chessy.",
   "scripts": {
-    "build": "rm -rf dist && webpack --config webpack.prod.js",
+    "build": "rm -rf dist && node create-env.js && webpack --config webpack.prod.js",
     "clean": "rm -f yarn-*.log && rm -f yarn.lock && rm -rf node_modules && yarn cache clean",
     "clean:authorize": "rm -f functions/authorize/npm-*.log && rm -f functions/authorize/package-lock.json && rm -rf functions/authorize/node_modules && npm cache verify",
     "lint": "prettier-standard --lint",
