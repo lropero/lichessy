@@ -1,0 +1,4 @@
+/.netlify
+/dist
+/functions/authorize/node_modules
+/functions/authorize/package-lock.json
