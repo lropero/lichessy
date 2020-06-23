@@ -1,27 +1,13 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { BrowserRouter, Redirect, Route, Switch } from 'react-router-dom'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 
 import ProtectedRoute from './protected-route'
 import routes from './routes'
 import { NotFound } from 'lichessy/components'
-import { updateAccount } from 'lichessy/store/session'
-import { useLichess } from 'lichessy/hooks'
 
 const Router = () => {
-  const dispatch = useDispatch()
-  const lichess = useLichess()
-  const { account, token } = useSelector(state => state.session)
-
-  useEffect(() => {
-    const fetchAccount = async () => {
-      const account = await lichess.getAccount()
-      dispatch(updateAccount(account))
-    }
-    if (Object.keys(token).length) {
-      fetchAccount()
-    }
-  }, [token])
+  const { account } = useSelector(state => state.account)
 
   const isAuthenticated = Object.keys(account).length
 

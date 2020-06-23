@@ -5,13 +5,18 @@
   "scripts": {
     "build": "rm -rf dist && node create-env.js && webpack --config webpack.prod.js",
     "clean": "rm -f yarn-*.log && rm -f yarn.lock && rm -rf node_modules && yarn cache clean",
-    "clean:authorize": "rm -f functions/authorize/npm-*.log && rm -f functions/authorize/package-lock.json && rm -rf functions/authorize/node_modules && npm cache verify",
+    "clean:api": "rm -f functions/api/npm-*.log && rm -f functions/api/package-lock.json && rm -rf functions/api/node_modules",
+    "clean:authorize": "rm -f functions/authorize/npm-*.log && rm -f functions/authorize/package-lock.json && rm -rf functions/authorize/node_modules",
     "lint": "prettier-standard --lint",
-    "nuke": "rm -f .yarnrc && yarn run clean && yarn && git checkout .yarnrc && yarn run clean:authorize && cd functions/authorize && npm install",
+    "nuke": "rm -f .yarnrc && yarn run clean && yarn && git checkout .yarnrc && yarn run nuke:api && yarn run nuke:authorize",
+    "nuke:api": "yarn run clean:api && cd functions/api && npm install",
+    "nuke:authorize": "yarn run clean:authorize && cd functions/authorize && npm install",
     "start": "node create-env.js && webpack-dev-server --config webpack.dev.js",
     "start:dev": "netlify dev",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "upgrade": "npx upgradeps && cd functions/authorize && npx upgradeps -n"
+    "upgrade": "npx upgradeps && yarn run upgrade:api && yarn run upgrade:authorize",
+    "upgrade:api": "cd functions/api && npx upgradeps -n",
+    "upgrade:authorize": "cd functions/authorize && npx upgradeps -n"
   },
   "dependencies": {
     "@reduxjs/toolkit": "^1.4.0",
@@ -22,6 +27,7 @@
     "react-dom": "^16.13.1",
     "react-redux": "^7.2.0",
     "react-router-dom": "^5.2.0",
+    "rxjs": "^6.5.5",
     "styled-components": "^5.1.1"
   },
   "devDependencies": {

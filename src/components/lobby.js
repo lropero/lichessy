@@ -1,6 +1,10 @@
 import Chessboard from 'chessboardjsx'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
+import { debounceTime } from 'rxjs/operators'
+import { fromEvent, timer } from 'rxjs'
+
+import { useLichess } from 'lichessy/hooks'
 
 const Main = styled.div`
   align-items: center;
@@ -11,10 +15,49 @@ const Main = styled.div`
   width: 100vw;
 `
 
-const Lobby = () => (
-  <Main>
-    <Chessboard orientation='white' position='' width={500} />
-  </Main>
-)
+const Lobby = () => {
+  const lichess = useLichess()
+
+  const [width, setWidth] = useState(
+    window.innerHeight < window.innerWidth
+      ? window.innerHeight
+      : window.innerWidth
+  )
+
+  useEffect(() => {
+    const resize = fromEvent(window, 'resize')
+      .pipe(debounceTime(10))
+      .subscribe(({ target }) =>
+        setWidth(
+          target.innerHeight < target.innerWidth
+            ? target.innerHeight
+            : target.innerWidth
+        )
+      )
+    return () => resize.unsubscribe()
+  }, [])
+
+  useEffect(() => {
+    const fetchPlaying = async () => {
+      const playing = await lichess.getPlaying()
+      console.log('playing', playing)
+      // if (playing.length) {
+      //   setFen(playing[0].fen)
+      // }
+    }
+    const interval = timer(0, 60000).subscribe(fetchPlaying)
+    return () => interval.unsubscribe()
+  }, [lichess])
+
+  return (
+    <Main>
+      <Chessboard
+        orientation='white'
+        position=''
+        width={Math.round(width * 0.75)}
+      />
+    </Main>
+  )
+}
 
 export default Lobby

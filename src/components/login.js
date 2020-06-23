@@ -1,13 +1,12 @@
 import React, { useEffect } from 'react'
 import styled from 'styled-components'
-import { Button, Space, Spin, Typography } from 'antd'
-import { LoadingOutlined } from '@ant-design/icons'
-import { useDispatch, useSelector } from 'react-redux'
+import { Button, Space, Typography } from 'antd'
+import { useDispatch } from 'react-redux'
 
 import chess from 'lichessy/assets/chess.mp4'
 import lichess from 'lichessy/assets/lichess.png'
 import Logo from 'lichessy/assets/logo.svg'
-import { updateToken } from 'lichessy/store/session'
+import { updateAccount } from 'lichessy/store/account'
 import { Video } from 'lichessy/components'
 
 const Main = styled.div`
@@ -21,24 +20,19 @@ const Main = styled.div`
 
 const Login = () => {
   const dispatch = useDispatch()
-  const { account, token } = useSelector(state => state.session)
 
   useEffect(() => {
-    const token = window.location.href.split('#')[1] || ''
-    if (token.length) {
+    const account = window.location.href.split('#')[1] || ''
+    if (account.length) {
       try {
-        dispatch(updateToken(JSON.parse(window.atob(token))))
+        dispatch(updateAccount(JSON.parse(window.atob(account))))
       } catch (error) {
         console.error(error.toString())
       }
     }
   }, [])
 
-  return !Object.keys(account).length && Object.keys(token).length ? (
-    <Main>
-      <Spin indicator={<LoadingOutlined spin style={{ fontSize: 60 }} />} />
-    </Main>
-  ) : (
+  return (
     <Video video={chess}>
       <Main>
         <Logo style={{ height: 130 }} />
@@ -66,7 +60,7 @@ const Login = () => {
             style={{ padding: '0 20px' }}
             type='primary'
           >
-            <Space>
+            <Space align='center'>
               Continue with Lichess
               <img src={lichess} style={{ width: 18 }} />
             </Space>
