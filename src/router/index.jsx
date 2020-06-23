@@ -7,9 +7,9 @@ import routes from './routes'
 import { NotFound } from 'lichessy/components'
 
 const Router = () => {
-  const { account } = useSelector(state => state.account)
+  const account = useSelector(state => state.account)
 
-  const isAuthenticated = Object.keys(account).length
+  const isAuthenticated = !!Object.keys(account).length
 
   return (
     <BrowserRouter>

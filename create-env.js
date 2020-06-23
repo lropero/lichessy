@@ -4,6 +4,7 @@ const environmentVariables = [
   'AUTHORIZE_PATH',
   'CLIENT_ID',
   'CLIENT_SECRET',
+  'CRYPTR',
   'REDIRECT_URI',
   'SCOPES',
   'TOKEN_HOST',
