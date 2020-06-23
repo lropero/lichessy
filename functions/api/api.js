@@ -15,8 +15,6 @@ const cookie = require('cookie')
 //   }
 // })
 
-// const baseURL = 'https://lichess.org/'
-
 // const cryptr = new Cryptr(process.env.CRYPTR)
 
 exports.handler = async event => {
@@ -26,7 +24,7 @@ exports.handler = async event => {
     // switch (command) {
     //   case 'playing': {
     //     const response = await axios.get('/api/account/playing', {
-    //       baseURL,
+    //       baseURL: process.env.BASE_URL,
     //       headers: { Authorization: `Bearer ${token.access_token}` }
     //     })
     //     return response.status === 200 && response.data

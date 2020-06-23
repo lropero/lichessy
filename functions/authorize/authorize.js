@@ -15,8 +15,6 @@ const authorizationCode = new AuthorizationCode({
   }
 })
 
-const baseURL = 'https://lichess.org/'
-
 const cryptr = new Cryptr(process.env.CRYPTR)
 
 exports.handler = async event => {
@@ -26,7 +24,7 @@ exports.handler = async event => {
       redirect_uri: process.env.REDIRECT_URI
     })
     const account = await axios.get('/api/account', {
-      baseURL,
+      baseURL: process.env.BASE_URL,
       headers: { Authorization: 'Bearer ' + token.access_token }
     })
     return {
