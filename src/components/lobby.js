@@ -39,13 +39,17 @@ const Lobby = () => {
 
   useEffect(() => {
     const fetchPlaying = async () => {
-      const playing = await lichess.getPlaying()
-      console.log('playing', playing)
-      // if (playing.length) {
-      //   setFen(playing[0].fen)
-      // }
+      try {
+        const playing = await lichess.getPlaying()
+        console.log('playing', playing)
+        // if (playing.length) {
+        //   setFen(playing[0].fen)
+        // }
+      } catch (error) {
+        console.error(error.toString())
+      }
     }
-    const interval = timer(0, 60000).subscribe(fetchPlaying)
+    const interval = timer(0, 10000).subscribe(fetchPlaying)
     return () => interval.unsubscribe()
   }, [lichess])
 

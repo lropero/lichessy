@@ -1,12 +1,14 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
-import { Button, Space, Typography } from 'antd'
+import { Button, Space, Spin, Typography } from 'antd'
+import { LoadingOutlined } from '@ant-design/icons'
 import { useDispatch } from 'react-redux'
 
-import chess from 'lichessy/assets/chess.mp4'
-import lichess from 'lichessy/assets/lichess.png'
+import chessVideo from 'lichessy/assets/chess.mp4'
+import lichessLogo from 'lichessy/assets/lichess.png'
 import Logo from 'lichessy/assets/logo.svg'
 import { updateAccount } from 'lichessy/store/account'
+import { useLichess } from 'lichessy/hooks'
 import { Video } from 'lichessy/components'
 
 const Main = styled.div`
@@ -20,20 +22,37 @@ const Main = styled.div`
 
 const Login = () => {
   const dispatch = useDispatch()
+  const lichess = useLichess()
+
+  const [fetchingAccount, setFetchingAccount] = useState(true)
 
   useEffect(() => {
+    const fetchAccount = async () => {
+      try {
+        const account = await lichess.getAccount()
+        dispatch(updateAccount(account))
+      } catch (error) {
+        setFetchingAccount(false)
+      }
+    }
     const account = window.location.href.split('#')[1] || ''
     if (account.length) {
       try {
         dispatch(updateAccount(JSON.parse(window.atob(account))))
       } catch (error) {
-        console.error(error.toString())
+        setFetchingAccount(false)
       }
+    } else {
+      fetchAccount()
     }
   }, [])
 
-  return (
-    <Video video={chess}>
+  return fetchingAccount ? (
+    <Main>
+      <Spin indicator={<LoadingOutlined spin style={{ fontSize: 60 }} />} />
+    </Main>
+  ) : (
+    <Video video={chessVideo}>
       <Main>
         <Logo style={{ height: 130 }} />
         <Space align='center' direction='vertical' size='large'>
@@ -50,11 +69,10 @@ const Login = () => {
           <Button
             href={`${process.env.TOKEN_HOST}${
               process.env.AUTHORIZE_PATH
-            }?client_id=${process.env.CLIENT_ID}&redirect_uri=${
-              process.env.REDIRECT_URI
-            }&scope=${JSON.parse(process.env.SCOPES).join(
-              '%20'
-            )}&response_type=code&state=${window.location.href}`}
+            }?client_id=${process.env.CLIENT_ID}&redirect_uri=${process.env
+              .REDIRECT + process.env.REDIRECT_URI}&scope=${JSON.parse(
+              process.env.SCOPES
+            ).join('%20')}&response_type=code&state=${window.location.href}`}
             shape='round'
             size='large'
             style={{ padding: '0 20px' }}
@@ -62,7 +80,7 @@ const Login = () => {
           >
             <Space align='center'>
               Continue with Lichess
-              <img src={lichess} style={{ width: 18 }} />
+              <img src={lichessLogo} style={{ width: 18 }} />
             </Space>
           </Button>
         </Space>

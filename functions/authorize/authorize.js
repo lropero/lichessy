@@ -1,7 +1,7 @@
-const { AuthorizationCode } = require('simple-oauth2')
 const axios = require('axios')
 const cookie = require('cookie')
 const Cryptr = require('cryptr')
+const { AuthorizationCode } = require('simple-oauth2')
 
 const authorizationCode = new AuthorizationCode({
   auth: {
@@ -19,29 +19,28 @@ const cryptr = new Cryptr(process.env.CRYPTR)
 
 exports.handler = async event => {
   try {
-    const token = await authorizationCode.getToken({
+    const { token } = await authorizationCode.getToken({
       code: event.queryStringParameters.code,
-      redirect_uri: process.env.REDIRECT_URI
+      redirect_uri: process.env.REDIRECT + process.env.REDIRECT_URI
     })
-    const account = await axios.get('/api/account', {
+    const response = await axios.get('/api/account', {
       baseURL: process.env.BASE_URL,
-      headers: { Authorization: 'Bearer ' + token.access_token }
+      headers: { Authorization: `Bearer ${token.access_token}` }
     })
+    const account = response.status === 200 && response.data
     return {
       body: '',
       headers: {
         'Cache-Control': 'no-cache',
         Location: `${event.queryStringParameters.state}#${Buffer.from(
           JSON.stringify(account)
-        ).toString('base64')}`
+        ).toString('base64')}`,
+        'Set-Cookie': cookie.serialize(
+          'token',
+          cryptr.encrypt(JSON.stringify(token)),
+          { httpOnly: true, sameSite: true }
+        )
       },
-      multiValueHeaders: [
-        'Set-Cookie',
-        cookie.serialize('token', cryptr.encrypt(JSON.stringify(token)), {
-          httpOnly: true,
-          sameSite: 'strict'
-        })
-      ],
       statusCode: 302
     }
   } catch (error) {

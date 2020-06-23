@@ -1,38 +1,67 @@
-// const { AuthorizationCode } = require('simple-oauth2')
-// const axios = require('axios')
+const axios = require('axios')
 const cookie = require('cookie')
-// const Cryptr = require('cryptr')
+const Cryptr = require('cryptr')
+const { ClientCredentials } = require('simple-oauth2')
 
-// const authorizationCode = new AuthorizationCode({
-//   auth: {
-//     authorizePath: process.env.AUTHORIZE_PATH,
-//     tokenHost: process.env.TOKEN_HOST,
-//     tokenPath: process.env.TOKEN_PATH
-//   },
-//   client: {
-//     id: process.env.CLIENT_ID,
-//     secret: process.env.CLIENT_SECRET
-//   }
-// })
+const clientCredentials = new ClientCredentials({
+  auth: {
+    authorizePath: process.env.AUTHORIZE_PATH,
+    tokenHost: process.env.TOKEN_HOST,
+    tokenPath: process.env.TOKEN_PATH
+  },
+  client: {
+    id: process.env.CLIENT_ID,
+    secret: process.env.CLIENT_SECRET
+  }
+})
 
-// const cryptr = new Cryptr(process.env.CRYPTR)
+const cryptr = new Cryptr(process.env.CRYPTR)
 
 exports.handler = async event => {
   try {
     const command = event.queryStringParameters.command || ''
     const cookies = cookie.parse(event.headers.cookie)
-    // switch (command) {
-    //   case 'playing': {
-    //     const response = await axios.get('/api/account/playing', {
-    //       baseURL: process.env.BASE_URL,
-    //       headers: { Authorization: `Bearer ${token.access_token}` }
-    //     })
-    //     return response.status === 200 && response.data
-    //   }
-    // }
+    if (!cookies.token) {
+      return {
+        body: 'Unauthorized',
+        statusCode: 401
+      }
+    }
+    let accessToken = clientCredentials.createToken(
+      JSON.parse(cryptr.decrypt(cookies.token))
+    )
+    if (accessToken.expired(300)) {
+      accessToken = await accessToken.refresh({
+        scope: accessToken.token.scopes
+      })
+    }
+    switch (command) {
+      case 'account': {
+        const response = await axios.get('/api/account', {
+          baseURL: process.env.BASE_URL,
+          headers: { Authorization: `Bearer ${accessToken.token.access_token}` }
+        })
+        return {
+          body:
+            (response.status === 200 && JSON.stringify(response.data)) || '',
+          statusCode: response.status
+        }
+      }
+      case 'playing': {
+        const response = await axios.get('/api/account/playing', {
+          baseURL: process.env.BASE_URL,
+          headers: { Authorization: `Bearer ${accessToken.token.access_token}` }
+        })
+        return {
+          body:
+            (response.status === 200 && JSON.stringify(response.data)) || '',
+          statusCode: response.status
+        }
+      }
+    }
     return {
-      body: JSON.stringify({ command, cookies }),
-      statusCode: 200
+      body: 'BadRequest',
+      statusCode: 400
     }
   } catch (error) {
     return {
