@@ -38,7 +38,11 @@ exports.handler = async event => {
         'Set-Cookie': cookie.serialize(
           'token',
           cryptr.encrypt(JSON.stringify(token)),
-          { httpOnly: true, sameSite: true }
+          {
+            httpOnly: true,
+            maxAge: 60 * 60 * 24 * 100,
+            sameSite: true
+          }
         )
       },
       statusCode: 302

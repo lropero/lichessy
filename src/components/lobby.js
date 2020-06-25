@@ -2,7 +2,7 @@ import Chessboard from 'chessboardjsx'
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { debounceTime } from 'rxjs/operators'
-import { fromEvent, timer } from 'rxjs'
+import { fromEvent } from 'rxjs'
 
 import { useLichess } from 'lichessy/hooks'
 
@@ -42,15 +42,11 @@ const Lobby = () => {
       try {
         const playing = await lichess.getPlaying()
         console.log('playing', playing)
-        // if (playing.length) {
-        //   setFen(playing[0].fen)
-        // }
       } catch (error) {
         console.error(error.toString())
       }
     }
-    const interval = timer(0, 10000).subscribe(fetchPlaying)
-    return () => interval.unsubscribe()
+    fetchPlaying()
   }, [lichess])
 
   return (

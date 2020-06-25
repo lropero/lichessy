@@ -1,9 +1,9 @@
 const axios = require('axios')
 const cookie = require('cookie')
 const Cryptr = require('cryptr')
-const { ClientCredentials } = require('simple-oauth2')
+const { AuthorizationCode } = require('simple-oauth2')
 
-const clientCredentials = new ClientCredentials({
+const authorizationCode = new AuthorizationCode({
   auth: {
     authorizePath: process.env.AUTHORIZE_PATH,
     tokenHost: process.env.TOKEN_HOST,
@@ -27,13 +27,11 @@ exports.handler = async event => {
         statusCode: 401
       }
     }
-    let accessToken = clientCredentials.createToken(
+    let accessToken = authorizationCode.createToken(
       JSON.parse(cryptr.decrypt(cookies.token))
     )
     if (accessToken.expired(300)) {
-      accessToken = await accessToken.refresh({
-        scope: accessToken.token.scopes
-      })
+      accessToken = await accessToken.refresh()
     }
     switch (command) {
       case 'account': {
