@@ -1,4 +1,6 @@
 import Chessboard from 'chessboardjsx'
+import ndjsonStream from 'can-ndjson-stream'
+import oboe from 'oboe'
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { debounceTime } from 'rxjs/operators'
@@ -41,13 +43,22 @@ const Lobby = () => {
     const fetchPlaying = async () => {
       try {
         const playing = await lichess.getPlaying()
-        console.log('playing', playing)
+        if (playing.nowPlaying.length) {
+          const board = await lichess.getBoard(playing.nowPlaying[0].gameId)
+          console.log('board', board)
+          const stream = ndjsonStream(board.body)
+          console.log('stream', stream)
+          const manzana = oboe(stream)
+          manzana.start(() => {
+            console.log.log('MANZANA START')
+          })
+        }
       } catch (error) {
         console.error(error.toString())
       }
     }
     fetchPlaying()
-  }, [lichess])
+  }, [])
 
   return (
     <Main>

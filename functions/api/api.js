@@ -56,6 +56,18 @@ exports.handler = async event => {
           statusCode: response.status
         }
       }
+      case 'token': {
+        // BREAKS PROXY PARADIGM, required to stream board from Lichess
+        return {
+          body: JSON.stringify({
+            baseURL: process.env.BASE_URL,
+            headers: {
+              Authorization: `Bearer ${accessToken.token.access_token}`
+            }
+          }),
+          statusCode: 200
+        }
+      }
     }
     return {
       body: 'BadRequest',
