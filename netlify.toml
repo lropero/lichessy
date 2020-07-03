@@ -1,4 +1,4 @@
 [dev]
-  command = 'yarn run start'
+  command = 'npm run start'
   framework = '#custom'
   targetPort = 3000

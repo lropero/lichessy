@@ -27,19 +27,6 @@ const Lobby = () => {
   )
 
   useEffect(() => {
-    const resize = fromEvent(window, 'resize')
-      .pipe(debounceTime(10))
-      .subscribe(({ target }) =>
-        setWidth(
-          target.innerHeight < target.innerWidth
-            ? target.innerHeight
-            : target.innerWidth
-        )
-      )
-    return () => resize.unsubscribe()
-  }, [])
-
-  useEffect(() => {
     const fetchPlaying = async () => {
       try {
         const playing = await lichess.getPlaying()
@@ -57,7 +44,17 @@ const Lobby = () => {
         console.error(error.toString())
       }
     }
+    const resize = fromEvent(window, 'resize')
+      .pipe(debounceTime(10))
+      .subscribe(({ target }) =>
+        setWidth(
+          target.innerHeight < target.innerWidth
+            ? target.innerHeight
+            : target.innerWidth
+        )
+      )
     fetchPlaying()
+    return () => resize.unsubscribe()
   }, [])
 
   return (
