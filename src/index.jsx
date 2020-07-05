@@ -15,7 +15,7 @@ const Main = styled.div`
   width: 100vw;
 `
 
-const hasEnvironmentVariables = !!Object.keys(process.env).length
+const hasEnvironmentVariables = !!process.env.CLIENT_ID
 
 ReactDOM.render(
   hasEnvironmentVariables ? (
