@@ -8,7 +8,7 @@ import chessVideo from 'lichessy/assets/chess.mp4'
 import lichessLogo from 'lichessy/assets/lichess.png'
 import Logo from 'lichessy/assets/logo.svg'
 import { updateAccount } from 'lichessy/store/account'
-import { useLichess } from 'lichessy/hooks'
+import { useApi } from 'lichessy/hooks'
 import { Video } from 'lichessy/components'
 
 const Main = styled.div`
@@ -21,15 +21,15 @@ const Main = styled.div`
 `
 
 const Login = () => {
+  const api = useApi()
   const dispatch = useDispatch()
-  const lichess = useLichess()
 
   const [fetchingAccount, setFetchingAccount] = useState(true)
 
   useEffect(() => {
     const fetchAccount = async () => {
       try {
-        const account = await lichess.getAccount()
+        const account = await api.getAccount()
         dispatch(updateAccount(account))
       } catch (error) {
         setFetchingAccount(false)

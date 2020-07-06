@@ -31,7 +31,7 @@ module.exports = merge(common, {
   plugins: [
     new HtmlWebpackPlugin({
       templateParameters: {
-        description: 'DEV#DESCRIPTION',
+        description: 'DESCRIPTION',
         title: 'DEV#Lichessy'
       }
     })

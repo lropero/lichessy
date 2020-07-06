@@ -6,7 +6,7 @@ import styled from 'styled-components'
 import { debounceTime } from 'rxjs/operators'
 import { fromEvent } from 'rxjs'
 
-import { useLichess } from 'lichessy/hooks'
+import { useApi } from 'lichessy/hooks'
 
 const Main = styled.div`
   align-items: center;
@@ -18,7 +18,7 @@ const Main = styled.div`
 `
 
 const Lobby = () => {
-  const lichess = useLichess()
+  const api = useApi()
 
   const [width, setWidth] = useState(
     window.innerHeight < window.innerWidth
@@ -29,9 +29,9 @@ const Lobby = () => {
   useEffect(() => {
     const fetchPlaying = async () => {
       try {
-        const playing = await lichess.getPlaying()
+        const playing = await api.getPlaying()
         if (playing.nowPlaying.length) {
-          const board = await lichess.getBoard(playing.nowPlaying[0].gameId)
+          const board = await api.getBoard(playing.nowPlaying[0].gameId)
           console.log('board', board)
           const stream = ndjsonStream(board.body)
           console.log('stream', stream)

@@ -1,3 +1,3 @@
-import useLichess from './use-lichess'
+import useApi from './use-api'
 
-export { useLichess }
+export { useApi }
